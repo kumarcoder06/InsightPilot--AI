@@ -158,48 +158,16 @@ def render():
 
                 is_num = pd.api.types.is_numeric_dtype(df[col])
 
-                st.markdown(f"""
-                <div style="background:#0f1117;border:1px solid #1a1f2e;border-radius:10px;
-                            padding:14px 16px;margin-bottom:12px">
+                # pre-compute all values — avoid complex expressions inside HTML f-string
+                unique_count = f"{df[col].nunique():,}"
+                null_pct_str = f"{null_pct:.1f}%"
+                complete_str = f"{completeness:.1f}%"
+                complete_w   = f"{completeness:.1f}%"
 
-                    <div style="font-family:JetBrains Mono,monospace;font-size:12px;
-                                color:#0091ff;font-weight:500;margin-bottom:8px">
-                        {col}
-                    </div>
-
-                    <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px">
-                        <span style="color:#4a5568">Type</span>
-                        <span style="font-family:JetBrains Mono,monospace;font-size:10px;color:{tc};
-                                     background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px">
-                            {dtype_str}
-                        </span>
-                    </div>
-
-                    <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px">
-                        <span style="color:#4a5568">Unique</span>
-                        <span style="font-family:JetBrains Mono,monospace;font-size:10px;color:#dde1ec">
-                            {df[col].nunique():,}
-                        </span>
-                    </div>
-
-                    <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:6px">
-                        <span style="color:#4a5568">Null %</span>
-                        <span style="font-family:JetBrains Mono,monospace;font-size:10px;color:{null_color}">
-                            {null_pct:.1f}%
-                        </span>
-                    </div>
-
-                    <div style="background:#090b0f;border-radius:3px;height:4px;overflow:hidden">
-                        <div style="width:{completeness:.1f}%;height:100%;
-                                    background:{null_color};border-radius:3px"></div>
-                    </div>
-
-                    <div style="font-family:JetBrains Mono,monospace;font-size:9px;color:#4a5568;margin-top:3px">
-                        {completeness:.1f}% complete
-                    </div>
-
-                </div>
-                """, unsafe_allow_html=True)
+                card = (
+                    f'<div style="background:#0f1117;border:1px solid #1a1f2e;border-radius:10px;'                    f'padding:14px 16px;margin-bottom:12px">'                    f'<div style="font-family:JetBrains Mono,monospace;font-size:12px;'                    f'color:#0091ff;font-weight:500;margin-bottom:8px">{col}</div>'                    f'<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px">'                    f'<span style="color:#4a5568">Type</span>'                    f'<span style="font-family:JetBrains Mono,monospace;font-size:10px;color:{tc};'                    f'background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:3px">{dtype_str}</span></div>'                    f'<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px">'                    f'<span style="color:#4a5568">Unique</span>'                    f'<span style="font-family:JetBrains Mono,monospace;font-size:10px;color:#dde1ec">{unique_count}</span></div>'                    f'<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:6px">'                    f'<span style="color:#4a5568">Null %</span>'                    f'<span style="font-family:JetBrains Mono,monospace;font-size:10px;color:{null_color}">{null_pct_str}</span></div>'                    f'<div style="background:#090b0f;border-radius:3px;height:4px;overflow:hidden">'                    f'<div style="width:{complete_w};height:100%;background:{null_color};border-radius:3px"></div></div>'                    f'<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:#4a5568;margin-top:3px">'                    f'{complete_str} complete</div></div>'
+                )
+                st.markdown(card, unsafe_allow_html=True)
 
 
 # -------------------------------------------------

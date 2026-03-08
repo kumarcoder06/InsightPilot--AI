@@ -6,6 +6,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 import streamlit as st
+from utils.display import safe_dataframe
 
 from utils.cleaner_engine import clean_dataframe, CleaningStep
 from utils.display import safe_dataframe
@@ -27,26 +28,31 @@ SEV_ICONS  = {"info":"ℹ","warning":"⚠","fixed":"✓","removed":"✕"}
 
 
 def _step_badge(step: CleaningStep):
-    color = SEV_COLORS.get(step.severity, COLORS["muted"])
-    icon  = SEV_ICONS.get(step.severity, "·")
+    import html as _html
+    color     = SEV_COLORS.get(step.severity, COLORS["muted"])
+    icon      = SEV_ICONS.get(step.severity, "·")
     cat_color = {
         "Missing Values":"#0091ff","Duplicates":"#ff6b35","Data Types":"#a855f7",
         "Outliers":"#f5c542","Column Names":"#00e5a0","String Cleaning":"#00e5a0",
         "Categorical":"#00e5a0","Empty Data":"#ff6b35"
     }.get(step.category, COLORS["muted"])
-    st.markdown(f"""
-    <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 12px;
-                border-left:3px solid {color};background:rgba(0,0,0,0.2);
-                border-radius:0 7px 7px 0;margin-bottom:6px">
-        <span style="font-size:13px;color:{color};flex-shrink:0">{icon}</span>
-        <div style="flex:1">
-            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:{cat_color};
-                         letter-spacing:0.5px;text-transform:uppercase">{step.category}</span>
-            {"" if not step.column else f'<span style="font-family:JetBrains Mono,monospace;font-size:9px;color:{COLORS["muted"]}"> · {step.column}</span>'}
-            <div style="font-size:12.5px;color:{COLORS['text']};margin-top:2px">{step.action}</div>
-            <div style="font-size:11px;color:{COLORS['muted']};margin-top:1px">{step.detail}</div>
-        </div>
-    </div>""", unsafe_allow_html=True)
+
+    safe_action = _html.escape(str(step.action))
+    safe_detail = _html.escape(str(step.detail))
+    safe_col    = _html.escape(str(step.column)) if step.column else ""
+
+    # build col span outside f-string to avoid nested quote conflict
+    col_span = (
+        f'<span style="font-family:JetBrains Mono,monospace;font-size:9px;'
+        f'color:{COLORS["muted"]}"> &middot; {safe_col}</span>'
+        if safe_col else ""
+    )
+
+    html_block = (
+        f'<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 12px;'        f'border-left:3px solid {color};background:rgba(0,0,0,0.2);'        f'border-radius:0 7px 7px 0;margin-bottom:6px">'        f'<span style="font-size:13px;color:{color};flex-shrink:0">{icon}</span>'        f'<div style="flex:1">'        f'<span style="font-family:JetBrains Mono,monospace;font-size:9px;color:{cat_color};'        f'letter-spacing:0.5px;text-transform:uppercase">{step.category}</span>'        + col_span +
+        f'<div style="font-size:12.5px;color:{COLORS["text"]};margin-top:2px">{safe_action}</div>'        f'<div style="font-size:11px;color:{COLORS["muted"]};margin-top:1px">{safe_detail}</div>'        f'</div></div>'
+    )
+    st.markdown(html_block, unsafe_allow_html=True)
 
 
 def render():
@@ -235,6 +241,7 @@ def render():
     st.caption(f"{clean_df.shape[0]:,} rows × {clean_df.shape[1]} columns")
     safe_dataframe(clean_df, max_rows=200, height=420)
     # Preview raw dataset
+    safe_dataframe(raw, max_rows=100)
 
 
 

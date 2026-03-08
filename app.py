@@ -134,7 +134,7 @@ code, pre { font-family: 'JetBrains Mono', monospace !important; background: #08
 
 # ── Session defaults ──────────────────────────────────────────────────────────
 for key, val in {
-    "api_key":        "AIzaSyBvyZMCn3Dwv5hrA9wusFRG9UIph-zYNGo",
+    "api_key":        st.secrets.get("GEMINI_API_KEY", ""),
     "raw_df":         None,   # uploaded raw dataframe
     "clean_df":       None,   # cleaned dataframe
     "cleaning_log":   [],     # list of cleaning steps
