@@ -1,4 +1,11 @@
 import streamlit as st
+import traceback
+
+if "raw_df" not in st.session_state:
+    st.session_state.raw_df = None
+
+if "clean_df" not in st.session_state:
+    st.session_state.clean_df = None
 
 st.set_page_config(
     page_title="InsightAI · Analyst Workstation",
@@ -127,18 +134,19 @@ code, pre { font-family: 'JetBrains Mono', monospace !important; background: #08
 
 # ── Session defaults ──────────────────────────────────────────────────────────
 for key, val in {
-    "api_key":        "",
+    "api_key":        "AIzaSyBvyZMCn3Dwv5hrA9wusFRG9UIph-zYNGo",
     "raw_df":         None,   # uploaded raw dataframe
     "clean_df":       None,   # cleaned dataframe
     "cleaning_log":   [],     # list of cleaning steps
     "chat_messages":  [],
+    "msg_counter":    0,      # chat message ID counter
     "pg_connected":   False,
 }.items():
     if key not in st.session_state:
         st.session_state[key] = val
 
 # ── Imports ───────────────────────────────────────────────────────────────────
-from pages import chat, visualize, profile, report, data_cleaner, dataset_explorer
+from modules import chat, visualize, profile, report, data_cleaner, dataset_explorer
 
 # ── Topbar ────────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -152,7 +160,7 @@ st.markdown("""
               background:#0f1117;border:1px solid #1a1f2e;padding:4px 12px;border-radius:6px">
     <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#00e5a0;
                  margin-right:6px;box-shadow:0 0 6px #00e5a0"></span>
-    Python · Streamlit · Pandas · NumPy
+    Python · Streamlit · Pandas · Gemini
   </div>
 </div>
 """, unsafe_allow_html=True)
@@ -162,29 +170,21 @@ with st.sidebar:
     st.markdown("### ◈ InsightAI")
     st.markdown('<div class="sec-hdr" style="margin-top:10px">Navigation</div>', unsafe_allow_html=True)
 
-    page = st.radio("", [
-        "🧹  Data Cleaner",
-        "📂  Dataset Explorer",
-        "◎   AI Query (NL→SQL)",
-        "📊  Power BI Charts",
-        "◈   Profile Data",
-        "≡   Report",
-    ], label_visibility="collapsed")
+    page = st.radio(
+        "Navigation",   # ← label must NOT be empty
+        [
+            "🧹  Data Cleaner",
+            "📂  Dataset Explorer",
+            "◎   AI Query (NL→SQL)",
+            "📊  Power BI Charts",
+            "◈   Profile Data",
+            "≡   Report",
+        ],
+        label_visibility="collapsed"
+    )
 
     st.markdown("---")
-    st.markdown('<div class="sec-hdr">API Key</div>', unsafe_allow_html=True)
-    api_key = st.text_input(
-    "Gemini API Key",
-    type="password",
-    value=st.session_state.api_key,
-    placeholder="AIza...",
-    label_visibility="collapsed"
-)
-if api_key:
-    st.session_state.api_key = api_key
-    st.markdown('<span style="font-family:JetBrains Mono,monospace;font-size:10px;color:#00e5a0">✓ Gemini API key set</span>', unsafe_allow_html=True)
-
-    st.markdown("---")
+   
 
     # Dataset status
     st.markdown('<div class="sec-hdr">Dataset Status</div>', unsafe_allow_html=True)
@@ -203,11 +203,27 @@ if api_key:
 
     st.markdown("---")
     st.markdown('<span style="font-family:JetBrains Mono,monospace;font-size:9px;color:#2a3040">v2.0 · Python + Streamlit</span>', unsafe_allow_html=True)
-
+    st.write("Selected page:", page)
 # ── Route ─────────────────────────────────────────────────────────────────────
-if   "Cleaner"   in page: data_cleaner.render()
-elif "Explorer"  in page: dataset_explorer.render()
-elif "AI Query"  in page: chat.render()
-elif "Power BI"  in page: visualize.render()
-elif "Profile"   in page: profile.render()
-elif "Report"    in page: report.render()
+try:
+    if "Cleaner" in page:
+        data_cleaner.render()
+
+    elif "Explorer" in page:
+        dataset_explorer.render()
+
+    elif "AI Query" in page:
+        chat.render()
+
+    elif "Power BI" in page:
+        visualize.render()
+
+    elif "Profile" in page:
+        profile.render()
+
+    elif "Report" in page:
+        report.render()
+
+except Exception:
+    st.error("Page crashed")
+    st.code(traceback.format_exc())
