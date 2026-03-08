@@ -10,7 +10,7 @@ from datetime import datetime
 
 
 def _summarise_df(df: pd.DataFrame) -> str:
-    """Build a textual summary of the dataframe for Claude."""
+    """Build a textual summary of the dataframe for the AI model."""
     num_cols = df.select_dtypes(include=[np.number]).columns.tolist()
     cat_cols = df.select_dtypes(include="object").columns.tolist()
     lines = [
@@ -160,7 +160,7 @@ def render():
     # AI Report Generator
     st.markdown("---")
     st.markdown("#### ✦ AI Report Section Generator")
-    st.markdown('<div style="font-size:12.5px;color:#4a5568;margin-bottom:12px">Generate a custom analysis section using Claude. Works best with an uploaded dataset.</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:12.5px;color:#4a5568;margin-bottom:12px">Generate a custom analysis section using AI. Works best with an uploaded dataset.</div>', unsafe_allow_html=True)
 
     if not st.session_state.get("api_key", "").strip():
         st.info("Set your Google Gemini API key in the sidebar to enable AI report generation.")

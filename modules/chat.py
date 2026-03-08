@@ -1,4 +1,4 @@
-"""pages/chat.py — Natural language to SQL using Claude API."""
+"""pages/chat.py — Natural language to SQL using Gemini API."""
 
 import re
 import json
