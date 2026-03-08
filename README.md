@@ -1,5 +1,5 @@
 # ◈ InsightAI v2 — AI Analyst Workstation
-### Python · Streamlit · Pandas · NumPy · Plotly · Anthropic · PostgreSQL
+### Python · Streamlit · Pandas · NumPy · Plotly ·Gemini· PostgreSQL
 
 A professional data analyst workstation with 6 integrated modules:
 dirty data cleaning, dataset exploration, NL→SQL, Power BI–style charts,
@@ -32,7 +32,7 @@ insightai/
 ├── pages/
 │   ├── data_cleaner.py            # Upload dirty data → auto-clean pipeline
 │   ├── dataset_explorer.py        # Stats, calcs, pivot, correlation, distribution
-│   ├── chat.py                    # NL → SQL via Claude API
+│   ├── chat.py                    # NL → SQL via Gemini API
 │   ├── visualize.py               # Power BI–style Plotly charts
 │   ├── profile.py                 # Deep column profiling
 │   └── report.py                  # AI-generated business reports
@@ -76,7 +76,7 @@ Built with Plotly to mimic Power BI visuals:
 
 ## 🔑 API Key
 
-Set in the sidebar. Get one at: https://console.anthropic.com
+Set in the sidebar. Get one at: https://aistudio.google.com/
 
 ---
 
@@ -95,7 +95,7 @@ def run_query(sql: str) -> pd.DataFrame:
     return df
 ```
 
-Then call `run_query(msg["sql"])` in `pages/chat.py` after Claude generates the SQL.
+Then call `run_query(msg["sql"])` in `pages/chat.py` after Gemini generates the SQL.
 
 ---
 
@@ -107,7 +107,7 @@ Then call `run_query(msg["sql"])` in `pages/chat.py` after Claude generates the 
 | Pandas | Data manipulation & cleaning |
 | NumPy | Numerical operations, IQR outlier detection |
 | Plotly | Power BI–style interactive charts |
-| Anthropic SDK | NL→SQL, AI report generation |
+| Google SDK | NL→SQL, AI report generation |
 | DuckDB | In-memory SQL on uploaded DataFrames |
 | psycopg2 | PostgreSQL connection |
 | SciPy | Statistical tests |
