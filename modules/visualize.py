@@ -286,7 +286,7 @@ def _chart_scatter(df: pd.DataFrame):
         sample = sample.sample(500, random_state=42)
 
     if color_col and color_col in df.columns:
-        sample = sample.join(df[color_col].str[:20], how="left")
+        sample = sample.join(df[color_col].astype(str).str[:20], how="left")
         groups = sample[color_col].unique()
         fig = go.Figure()
         for i, grp in enumerate(groups[:8]):
